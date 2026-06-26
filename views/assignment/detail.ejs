@@ -1,0 +1,343 @@
+<%- include('../partials/header', { title: assignment.title + ' | AssignTrust' }) %>
+<%- include('../partials/sidebar', { activePage: '' }) %>
+
+<main class="main-content">
+    <%- include('../partials/topbar') %>
+
+    <div class="page-content">
+        <a href="javascript:history.back()" style="display: inline-block; margin-bottom: 20px; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-arrow-left"></i> Back</a>
+        
+        <div class="dashboard-grid">
+            <div class="main-column">
+                <!-- ASSIGNMENT DETAILS -->
+                <div class="panel-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h1 style="font-size: 1.5rem; margin-bottom: 10px;"><%= assignment.title %></h1>
+                            <div style="display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted);">
+                                <span><i class="fas fa-book" style="color: var(--accent);"></i> <%= assignment.subject %></span>
+                                <span><i class="fas fa-university" style="color: var(--accent2);"></i> <%= assignment.college %></span>
+                                <span><i class="fas fa-clock" style="color: var(--orange);"></i> Deadline: <%= new Date(assignment.deadline).toLocaleDateString() %></span>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--green);">₹<%= assignment.budget.min %> - ₹<%= assignment.budget.max %></div>
+                            <span class="proj-status" style="display: inline-block; margin-top: 10px; text-transform: capitalize; background: rgba(108,99,255,0.15); color: var(--accent); padding: 5px 12px; border-radius: 99px; font-size: 0.8rem; font-weight: 600;"><%= assignment.status.replace('_', ' ') %></span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">Description</h3>
+                        <p style="color: var(--text-muted); line-height: 1.6; white-space: pre-wrap; font-size: 0.95rem;"><%= assignment.description %></p>
+                    </div>
+
+                    <% if (assignment.additionalInstructions) { %>
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">Additional Instructions</h3>
+                        <p style="color: var(--text-muted); line-height: 1.6; white-space: pre-wrap; font-size: 0.95rem;"><%= assignment.additionalInstructions %></p>
+                    </div>
+                    <% } %>
+
+                    <% if (assignment.questionFiles && assignment.questionFiles.length > 0) { %>
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">Attachments</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <% assignment.questionFiles.forEach(file => { %>
+                                <a href="<%= file.url %>" target="_blank" style="display: flex; align-items: center; gap: 8px; background: var(--bg-card2); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: white;">
+                                    <i class="fas fa-file-pdf" style="color: var(--red);"></i> <%= file.originalName || 'Attachment' %>
+                                </a>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+                    
+                    <% if (assignment.requiredSkills && assignment.requiredSkills.length > 0) { %>
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">Required Skills</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <% assignment.requiredSkills.forEach(skill => { %>
+                                <span style="background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem;"><%= skill %></span>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- SUBMISSIONS SECTION (If assigned) -->
+                <% if (assignment.status === 'submitted' || assignment.status === 'completed') { %>
+                    <div class="panel-card" style="margin-bottom: 20px; border-color: var(--green);">
+                        <h3 style="color: var(--green); margin-bottom: 15px;"><i class="fas fa-check-circle"></i> Work Submitted</h3>
+                        
+                        <% if (assignment.submissions && assignment.submissions.length > 0) { %>
+                            <% assignment.submissions.forEach((sub, idx) => { %>
+                                <div style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <span style="font-weight: 600; font-size: 0.9rem;">Attempt #<%= sub.attempt %></span>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted);"><%= new Date(sub.createdAt).toLocaleString() %></span>
+                                    </div>
+                                    <% if (sub.note) { %>
+                                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; white-space: pre-wrap;"><%= sub.note %></p>
+                                    <% } %>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <% sub.files.forEach(file => { %>
+                                            <a href="<%= file.url %>" target="_blank" style="display: flex; align-items: center; gap: 8px; background: var(--bg-card2); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: white; text-decoration: none;">
+                                                <i class="fas <%= file.mimetype && file.mimetype.includes('pdf') ? 'fa-file-pdf' : (file.mimetype && file.mimetype.startsWith('image') ? 'fa-file-image' : 'fa-file-alt') %>" style="color: var(--accent);"></i>
+                                                <%= file.originalName || 'Download File' %>
+                                            </a>
+                                        <% }) %>
+                                    </div>
+                                    <span class="proj-status" style="display: inline-block; margin-top: 10px; text-transform: capitalize; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; <%= sub.status === 'approved' ? 'background: rgba(34,197,94,0.15); color: var(--green);' : (sub.status === 'revision' ? 'background: rgba(239,68,68,0.15); color: #ef4444;' : 'background: rgba(108,99,255,0.15); color: var(--accent);') %>"><%= sub.status %></span>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p style="color: var(--text-muted);">The writer has submitted the completed work.</p>
+                        <% } %>
+                        
+                        <% if (user.role === 'client' && assignment.status === 'submitted') { %>
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                                <h4>Approve & Mark Completed</h4>
+                                <form id="complete-form" style="margin-top: 15px;">
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Rating (1-5)</label>
+                                        <input type="number" name="rating" id="complete-rating" min="1" max="5" required style="width: 100px; padding: 8px; border-radius: 6px; background: var(--bg-card2); border: 1px solid var(--border); color: white;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Review (Optional)</label>
+                                        <textarea name="review" id="complete-review" rows="3" style="width: 100%; padding: 8px; border-radius: 6px; background: var(--bg-card2); border: 1px solid var(--border); color: white;"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn-primary" style="background: var(--green);">Mark as Completed</button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+                
+                <% if (user.role === 'writer' && ['assigned', 'in_progress'].includes(assignment.status) && assignment.assignedWriter._id.toString() === user._id.toString()) { %>
+                    <div class="panel-card" style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px;">Submit Your Work</h3>
+                        <form id="submit-work-form" enctype="multipart/form-data">
+                            <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Upload Files (Max 20MB)</label>
+                                <input type="file" name="submissionFiles" id="submission-files" multiple required style="width: 100%; padding: 10px; background: var(--bg-card2); border-radius: 8px; border: 1px dashed var(--border);">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Add a note</label>
+                                <textarea name="note" rows="3" style="width: 100%; padding: 8px; border-radius: 6px; background: var(--bg-card2); border: 1px solid var(--border); color: white;" placeholder="Briefly describe your submission..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Submit Assignment</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- SIDEBAR DETAILS -->
+            <aside class="right-panel">
+                <!-- CLIENT INFO -->
+                <div class="panel-card">
+                    <h3 style="margin-bottom: 15px; font-size: 0.95rem;">About the Client</h3>
+                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                        <img src="<%= assignment.student.avatar || 'https://i.pravatar.cc/150?img=11' %>" alt="Client" style="width: 60px; height: 60px; border-radius: 50%;">
+                        <div>
+                            <h4 style="font-size: 1rem; margin-bottom: 3px;"><%= assignment.student.name %></h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);"><%= assignment.student.college %></p>
+                        </div>
+                    </div>
+                    <% if (user.role === 'writer' && assignment.status === 'open') { %>
+                        <button onclick="startChat('<%= assignment.student._id %>', '<%= assignment._id %>')" class="btn-primary" style="width: 100%; justify-content: center; background: var(--bg-card2); border: 1px solid var(--border); color: white; margin-top: 10px;">
+                            <i class="fas fa-comment"></i> Message Client
+                        </button>
+                    <% } %>
+                </div>
+
+                <!-- ACTION BOX -->
+                <div class="panel-card">
+                    <% if (user.role === 'client' && assignment.student._id.toString() === user._id.toString()) { %>
+                        <h3 style="margin-bottom: 15px; font-size: 0.95rem;">Manage Assignment</h3>
+                        
+                        <% if (assignment.status === 'open') { %>
+                            <div style="margin-bottom: 20px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 800; color: var(--accent);"><%= assignment.proposalCount || 0 %></div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Proposals Received</p>
+                            </div>
+                            <a href="/assignment/<%= assignment._id %>/proposals" class="btn-primary" style="width: 100%; justify-content: center; margin-bottom: 10px;">View Proposals</a>
+                            <a href="/assignment/<%= assignment._id %>/edit" class="btn-primary" style="width: 100%; justify-content: center; background: var(--bg-card2); border: 1px solid var(--border); color: white; margin-bottom: 10px;"><i class="fas fa-edit"></i> Edit Details</a>
+                            
+                            <form id="close-assignment-form">
+                                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);"><i class="fas fa-times"></i> Close Assignment</button>
+                            </form>
+                        <% } else { %>
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">This assignment is currently <strong><%= assignment.status.replace('_', ' ') %></strong>.</p>
+                            <% if (assignment.assignedWriter) { %>
+                                <div style="padding: 15px; background: rgba(34,197,94,0.1); border-radius: 10px; margin-bottom: 15px;">
+                                    <p style="font-size: 0.8rem; color: var(--green); margin-bottom: 5px;">Assigned to:</p>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img src="<%= assignment.assignedWriter.avatar || 'https://i.pravatar.cc/150?img=12' %>" alt="Writer" style="width: 30px; height: 30px; border-radius: 50%;">
+                                        <span style="font-weight: 600;"><%= assignment.assignedWriter.name %></span>
+                                    </div>
+                                </div>
+                                <button onclick="startChat('<%= assignment.assignedWriter._id %>', '<%= assignment._id %>')" class="btn-primary" style="width: 100%; justify-content: center;">
+                                    <i class="fas fa-comment"></i> Chat with Writer
+                                </button>
+                            <% } %>
+                        <% } %>
+                        
+                    <% } else if (user.role === 'writer') { %>
+                        
+                        <% if (assignment.status === 'open') { %>
+                            <% if (myProposal) { %>
+                                <div style="text-align: center; padding: 15px; background: rgba(34,197,94,0.1); border-radius: 10px; border: 1px solid rgba(34,197,94,0.3);">
+                                    <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px;"></i>
+                                    <h4 style="color: var(--green); margin-bottom: 5px;">Proposal Sent</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">You bid ₹<%= myProposal.bidAmount %> in <%= myProposal.deliveryTime %> hrs.</p>
+                                </div>
+                                <div style="margin-top: 15px;">
+                                    <form id="withdraw-proposal-form" data-id="<%= myProposal._id %>">
+                                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);">Withdraw Proposal</button>
+                                    </form>
+                                </div>
+                            <% } else { %>
+                                <h3 style="margin-bottom: 15px; font-size: 0.95rem;">Submit Proposal</h3>
+                                <form id="submit-proposal-form">
+                                    <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem;">Your Bid (₹)</label>
+                                        <input type="number" name="bidAmount" min="<%= assignment.budget.min %>" placeholder="e.g. <%= assignment.budget.min %>" required style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-card2); border: 1px solid var(--border); color: white;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem;">Delivery Time (Hours)</label>
+                                        <input type="number" name="deliveryTime" min="1" placeholder="e.g. 24" required style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-card2); border: 1px solid var(--border); color: white;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem;">Cover Letter</label>
+                                        <textarea name="coverLetter" rows="4" required placeholder="Why are you the best fit for this assignment?" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-card2); border: 1px solid var(--border); color: white; resize: vertical;"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Send Proposal</button>
+                                </form>
+                            <% } %>
+                        <% } else if (['assigned', 'in_progress', 'submitted'].includes(assignment.status) && assignment.assignedWriter && assignment.assignedWriter._id.toString() === user._id.toString()) { %>
+                            <div style="text-align: center; padding: 15px; background: rgba(108,99,255,0.1); border-radius: 10px; border: 1px solid rgba(108,99,255,0.3); margin-bottom: 15px;">
+                                <i class="fas fa-briefcase" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;"></i>
+                                <h4 style="color: var(--accent); margin-bottom: 5px;">You are hired!</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Complete the work and submit before the deadline.</p>
+                            </div>
+                            <button onclick="startChat('<%= assignment.student._id %>', '<%= assignment._id %>')" class="btn-primary" style="width: 100%; justify-content: center;">
+                                <i class="fas fa-comment"></i> Chat with Client
+                            </button>
+                        <% } %>
+                    <% } %>
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+
+<script>
+async function startChat(recipientId, assignmentId) {
+    try {
+        const response = await fetch('/chat/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recipientId, assignmentId })
+        });
+        const data = await response.json();
+        if (data.success) {
+            window.location.href = `/chat/${data.conversationId}`;
+        } else {
+            alert(data.message || 'Failed to start chat');
+        }
+    } catch (err) {
+        alert('An error occurred');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Complete Assignment Form (Client)
+    const completeForm = document.getElementById('complete-form');
+    if (completeForm) {
+        completeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rating = document.getElementById('complete-rating').value;
+            const review = document.getElementById('complete-review').value;
+            try {
+                const res = await fetch(`/assignment/<%= assignment._id %>/complete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rating, review })
+                });
+                const data = await res.json();
+                if (data.success) window.location.reload();
+                else alert(data.message);
+            } catch (err) { alert('An error occurred'); }
+        });
+    }
+
+    // Submit Work Form (Writer)
+    const submitWorkForm = document.getElementById('submit-work-form');
+    if (submitWorkForm) {
+        submitWorkForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(submitWorkForm);
+            try {
+                const res = await fetch('/submit', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) window.location.reload();
+                else alert(data.message);
+            } catch (err) { alert('An error occurred'); }
+        });
+    }
+
+    // Submit Proposal Form (Writer)
+    const submitProposalForm = document.getElementById('submit-proposal-form');
+    if (submitProposalForm) {
+        submitProposalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(submitProposalForm);
+            const jsonData = Object.fromEntries(formData.entries());
+            try {
+                const res = await fetch('/proposal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jsonData)
+                });
+                const data = await res.json();
+                if (data.success) window.location.reload();
+                else alert(data.message);
+            } catch (err) { alert('An error occurred'); }
+        });
+    }
+
+    // Withdraw Proposal Form (Writer)
+    const withdrawForm = document.getElementById('withdraw-proposal-form');
+    if (withdrawForm) {
+        withdrawForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!confirm('Withdraw proposal?')) return;
+            const pid = withdrawForm.getAttribute('data-id');
+            try {
+                const res = await fetch(`/proposal/${pid}/withdraw`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) window.location.reload();
+                else alert(data.message);
+            } catch (err) { alert('An error occurred'); }
+        });
+    }
+
+    // Close Assignment Form (Client)
+    const closeForm = document.getElementById('close-assignment-form');
+    if (closeForm) {
+        closeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to close this assignment?')) return;
+            try {
+                const res = await fetch(`/assignment/<%= assignment._id %>/close`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) window.location.reload();
+                else alert(data.message);
+            } catch (err) { alert('An error occurred'); }
+        });
+    }
+});
+</script>
+
+<%- include('../partials/footer') %>

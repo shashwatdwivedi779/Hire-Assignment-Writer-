@@ -1,0 +1,84 @@
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+            <span class="logo-text">AssignTrust</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">MAIN</div>
+            <a href="/dashboard" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>" id="nav-dashboard">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+                <div class="nav-indicator"></div>
+            </a>
+            
+            <% if (user.role === 'client') { %>
+                <a href="/my-assignments" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'projects' ? 'active' : '' %>" id="nav-projects">
+                    <i class="fas fa-folder-open"></i>
+                    <span>My Projects</span>
+                </a>
+                <a href="/create" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'post' ? 'active' : '' %>" id="nav-post">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Post Project</span>
+                </a>
+            <% } else if (user.role === 'writer') { %>
+                <a href="/marketplace" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'marketplace' ? 'active' : '' %>" id="nav-marketplace">
+                    <i class="fas fa-search"></i>
+                    <span>Browse Jobs</span>
+                </a>
+                <a href="/my-proposals" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'proposals' ? 'active' : '' %>" id="nav-proposals">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>My Proposals</span>
+                </a>
+                <a href="/my-work" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'work' ? 'active' : '' %>" id="nav-work">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Active Work</span>
+                </a>
+            <% } else if (user.role === 'admin') { %>
+                <a href="/admin/users" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'users' ? 'active' : '' %>" id="nav-users">
+                    <i class="fas fa-users"></i>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/assignments" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'assignments' ? 'active' : '' %>" id="nav-admin-assignments">
+                    <i class="fas fa-tasks"></i>
+                    <span>Manage Assignments</span>
+                </a>
+            <% } %>
+
+            <div class="nav-label">COMMUNICATION</div>
+            <a href="/chat" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'chat' ? 'active' : '' %>" id="nav-messages">
+                <i class="fas fa-message"></i>
+                <span>Messages</span>
+            </a>
+            <a href="/notifications" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'notifications' ? 'active' : '' %>" id="nav-notifs">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+                <% if (typeof unreadNotifCount !== 'undefined' && unreadNotifCount > 0) { %>
+                    <span class="nav-badge new"><%= unreadNotifCount %></span>
+                <% } %>
+            </a>
+
+            <div class="nav-label">ACCOUNT</div>
+            <a href="/profile" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'profile' ? 'active' : '' %>" id="nav-profile">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="/settings" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'active' : '' %>" id="nav-settings">
+                <i class="fas fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <img src="<%= user.avatar || 'https://i.pravatar.cc/150?img=12' %>" alt="Profile Photo" class="sidebar-avatar">
+            <div class="sidebar-user-info">
+                <p class="sidebar-username"><%= user.name %></p>
+                <p class="sidebar-role" style="text-transform: capitalize;"><%= user.role %></p>
+            </div>
+            <a href="/logout" class="sidebar-logout" title="Logout"><i class="fas fa-right-from-bracket"></i></a>
+        </div>
+    </aside>
+
+    <!-- OVERLAY for mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>

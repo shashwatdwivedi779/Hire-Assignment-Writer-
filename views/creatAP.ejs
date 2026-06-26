@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a New Assignment | AssignTrust Dashboard</title>
+    <link rel="stylesheet" href="/creatAP.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+
+    <div class="dashboard-wrapper">
+        <header class="dash-header">
+            <div class="header-container">
+                <div class="brand-logo">Assign<span>Trust</span></div>
+                <div class="user-profile">
+                    <span class="user-role">Student Portal</span>
+                    <div class="avatar">👨‍🎓</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="form-wizard-container">
+                
+                <div class="glass-card wizard-header">
+                    <h2>Create a New Assignment Post</h2>
+                    <p>Fill out the details below to receive competitive bids from verified expert writers instantly.</p>
+                    
+                    <div class="progress-indicator">
+                        <div class="progress-line"><div class="progress-line-fill" id="progressLine"></div></div>
+                        <div class="step-node active" data-step="1">
+                            <div class="node-circle">1</div>
+                            <span class="node-label">Basic Info</span>
+                        </div>
+                        <div class="step-node" data-step="2">
+                            <div class="node-circle">2</div>
+                            <span class="node-label">Attachments</span>
+                        </div>
+                        <div class="step-node" data-step="3">
+                            <div class="node-circle">3</div>
+                            <span class="node-label">Deadline & Budget</span>
+                        </div>
+                        <div class="step-node" data-step="4">
+                            <div class="node-circle">4</div>
+                            <span class="node-label">Preferences</span>
+                        </div>
+                    </div>
+                </div>
+
+<!-- From Uiverse.io by Jedi-hongbin --> 
+
+<a href="javascript:history.back()" class="back-btn">
+    <i class="fas fa-arrow-left"></i>
+    Back
+</a>
+                <form id="assignmentForm" action="/create" method="POST" enctype="multipart/form-data" novalidate>
+                    
+                    <div class="step-panel active" id="step1">
+                        <div class="glass-card panel-content">
+                            <h3 class="panel-title">1. Basic Assignment Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="assignmentTitle" class="required-label">Assignment Title</label>
+                                <input type="text" id="assignmentTitle" name="title" placeholder="e.g., Engineering Physics Assignment" required>
+                                <span class="error-msg">Please provide a descriptive title.</span>
+                            </div>
+
+                            <div class="form-row text-inputs-row">
+                                <div class="form-group">
+                                    <label for="subjectSelect" class="required-label">Subject</label>
+                                    <select id="subjectSelect" name="subject" required>
+                                        <option value="" disabled selected>Select Subject</option>
+                                        <option value="Engineering Physics">Engineering Physics</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Data Structures">Data Structures</option>
+                                        <option value="DBMS">DBMS</option>
+                                        <option value="Operating System">Operating System</option>
+                                        <option value="Java">Java</option>
+                                        <option value="Python">Python</option>
+                                        <option value="Civil Engineering">Civil Engineering</option>
+                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span class="error-msg">Please select a subject area.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="assignmentTopic" class="required-label">Topic / Specific Concept</label>
+                                    <input type="text" id="assignmentTopic" name="topic" placeholder="e.g., Quantum Mechanics and Wave Functions" required>
+                                    <span class="error-msg">Please state the core topic.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description" class="required-label">Detailed Requirements & Description</label>
+                                <textarea id="description" name="description" rows="6" placeholder="Explain the concept of wave function, Schrodinger equation and uncertainty principle. Include specific diagrams or required derivations..." required></textarea>
+                                <span class="error-msg">Detailed description helps writers deliver quality work.</span>
+                            </div>
+
+                            <div class="form-row solo-row-adjust">
+                                <div class="form-group">
+                                    <label for="pageCount" class="required-label">Number of Pages Required</label>
+                                    <input type="number" id="pageCount" name="pages" min="1" placeholder="e.g., 10" required>
+                                    <span class="error-msg">Minimum 1 page required.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-panel" id="step2">
+                        <div class="glass-card panel-content">
+                            <h3 class="panel-title">2. Materials & Support Attachments</h3>
+                            <p class="panel-subtitle">Upload questions sheets, templates or reference notes. Max 10 items total.</p>
+                            
+                            <div class="upload-grid">
+                                <div class="upload-box-wrapper">
+                                    <label class="required-label">Upload Assignment Question/Prompt PDF</label>
+                                    <div class="drop-zone" id="dropZoneQuestions">
+                                        <div class="drop-zone-icon">📄</div>
+                                        <p class="drop-zone-text">Drag & drop your question sheet or click to upload</p>
+                                        <input type="file" id="questionFiles" name="questionFiles" multiple accept=".pdf,.doc,.docx" class="hidden-file-input">
+                                    </div>
+                                    <div class="file-list-preview" id="questionFileList"></div>
+                                </div>
+
+                                <div class="upload-box-wrapper">
+                                    <label>Upload Reference/Supporting Materials</label>
+                                    <div class="drop-zone" id="dropZoneReferences">
+                                        <div class="drop-zone-icon">📚</div>
+                                        <p class="drop-zone-text">Upload Class Notes, Teacher Slides, PPTs or Sample Work</p>
+                                        <input type="file" id="referenceFiles" name="referenceFiles" multiple accept=".pdf,.ppt,.pptx,.doc,.docx,.jpg,.png" class="hidden-file-input">
+                                    </div>
+                                    <div class="file-list-preview" id="referenceFileList"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group margin-top-lg">
+                                <label for="additionalInstructions">Additional Styling or Explicit Context Instructions</label>
+                                <textarea id="additionalInstructions" name="additionalInstructions" rows="4" placeholder="e.g., Use blue pen handwriting templates. Draw neat geometric diagrams. Absolutely zero AI-generated content allowed."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-panel" id="step3">
+                        <div class="glass-card panel-content">
+                            <h3 class="panel-title">3. Delivery Timeline & Secure Escrow Budget</h3>
+                            
+                            <div class="form-row items-aligned-center">
+                                <div class="form-group">
+                                    <label for="deadlineInput" class="required-label">Submission Deadline</label>
+                                    <input type="datetime-local" id="deadlineInput" name="deadline" required>
+                                    <span class="error-msg">Please select a valid future date/time delivery parameter.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Calculated Urgency Level</label>
+                                    <div class="urgency-display-badge status-normal" id="urgencyBadge">Normal Urgency</div>
+                                    <p class="field-hint-text">Auto-generated based on selected timeframe boundaries.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group margin-top-md">
+                                <label for="budgetRange" class="required-label">Target Budget Allocation: <span id="budgetValue">₹300 - ₹500</span></label>
+                                <div class="range-slider-container">
+                                    <input type="range" id="budgetRange" name="budgetRange" min="100" max="5000" step="50" value="400">
+                                    <div class="slider-labels">
+                                        <span>₹100 (Standard)</span>
+                                        <span>₹5,000+ (Premium Projects)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-panel" id="step4">
+                        <div class="glass-card panel-content">
+                            <h3 class="panel-title">4. Vetted Writer Preferences</h3>
+                            
+                            <div class="form-row row-two-split">
+                                <div class="form-group">
+                                    <label for="assignmentType" class="required-label">Assignment Structure Framework</label>
+                                    <select id="assignmentType" name="assignmentType" required>
+                                        <option value="Handwritten Assignment">Handwritten Assignment</option>
+                                        <option value="Typed Assignment" selected>Typed Assignment</option>
+                                        <option value="Project Report">Project Report</option>
+                                        <option value="Research Paper">Research Paper</option>
+                                        <option value="Presentation">Presentation</option>
+                                        <option value="Lab Report">Lab Report</option>
+                                        <option value="Case Study">Case Study</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="required-label">Writers Communication Language</label>
+                                    <select name="writerLanguage" class="form-control">
+                                        <option value="English">English Native</option>
+                                        <option value="Hindi">Hindi Native</option>
+                                        <option value="Both" selected>Bilingual (Both allowed)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group flex-checkbox margin-top-md">
+                                <input type="checkbox" id="experienceRequired" name="experienceRequired" value="Yes">
+                                <label for="experienceRequired"><strong>Require Verified Experts Only?</strong> Limit applications solely to writers who possess certified academic degrees in this subject domain.</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-secondary" id="btnPrev" disabled>Back</button>
+                        <button type="button" class="btn btn-primary-action" id="btnNext">Continue</button>
+                    </div>
+
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 1;
+            const totalSteps = 4;
+
+            const form = document.getElementById('assignmentForm');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const progressLine = document.getElementById('progressLine');
+            const steps = document.querySelectorAll('.step-panel');
+            const nodes = document.querySelectorAll('.step-node');
+            const budgetRange = document.getElementById('budgetRange');
+            const budgetValue = document.getElementById('budgetValue');
+            const deadlineInput = document.getElementById('deadlineInput');
+            const urgencyBadge = document.getElementById('urgencyBadge');
+
+            budgetRange.addEventListener('input', (e) => {
+                let baseVal = parseInt(e.target.value);
+                let highRange = Math.round(baseVal * 1.3);
+                budgetValue.textContent = `₹${baseVal} - ₹${highRange}`;
+            });
+
+            deadlineInput.addEventListener('change', () => {
+                if(!deadlineInput.value) return;
+                const now = new Date();
+                const selectedDate = new Date(deadlineInput.value);
+                const diffHours = (selectedDate - now) / (1000 * 60 * 60);
+
+                urgencyBadge.className = 'urgency-display-badge';
+                if (diffHours <= 0) {
+                    urgencyBadge.textContent = "Invalid Past Date";
+                    urgencyBadge.classList.add('status-critical');
+                } else if (diffHours < 12) {
+                    urgencyBadge.textContent = "🚨 Very Urgent (<12 Hours)";
+                    urgencyBadge.classList.add('status-critical');
+                } else if (diffHours <= 36) {
+                    urgencyBadge.textContent = "⏳ Urgent (Under 36 Hours)";
+                    urgencyBadge.classList.add('status-warning');
+                } else {
+                    urgencyBadge.textContent = "✅ Normal Urgency";
+                    urgencyBadge.classList.add('status-normal');
+                }
+            });
+
+            btnNext.addEventListener('click', () => {
+                if (currentStep < totalSteps) {
+                    if (validateStep(currentStep)) {
+                        currentStep++;
+                        updateWizardUI();
+                    }
+                } else {
+                    if (validateStep(currentStep)) form.submit();
+                }
+            });
+
+            btnPrev.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateWizardUI();
+                }
+            });
+
+            function validateStep(stepIndex) {
+                const activePanel = document.getElementById(`step${stepIndex}`);
+                const requiredFields = activePanel.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('input-error');
+                        const error = field.parentElement.querySelector('.error-msg');
+                        if (error) error.style.display = 'block';
+                    } else {
+                        field.classList.remove('input-error');
+                        const error = field.parentElement.querySelector('.error-msg');
+                        if (error) error.style.display = 'none';
+                    }
+                });
+                return isValid;
+            }
+
+            function updateWizardUI() {
+                steps.forEach((panel, index) => panel.classList.toggle('active', index === (currentStep - 1)));
+                nodes.forEach((node, index) => node.classList.toggle('active', index < currentStep));
+                progressLine.style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
+                btnPrev.disabled = (currentStep === 1);
+                
+                if (currentStep === totalSteps) {
+                    btnNext.textContent = "Publish and Post Order";
+                    btnNext.className = "btn btn-primary-action btn-submit-accent";
+                } else {
+                    btnNext.textContent = "Continue";
+                    btnNext.className = "btn btn-primary-action";
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+
+            setupDropZone('dropZoneQuestions', 'questionFiles', 'questionFileList');
+            setupDropZone('dropZoneReferences', 'referenceFiles', 'referenceFileList');
+
+            function setupDropZone(zoneId, inputId, listId) {
+                const zone = document.getElementById(zoneId);
+                const input = document.getElementById(inputId);
+                const list = document.getElementById(listId);
+
+                zone.addEventListener('click', () => input.click());
+                zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+                zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('dragover');
+                    if(e.dataTransfer.files.length > 0) {
+                        input.files = e.dataTransfer.files;
+                        renderFiles(input.files, list);
+                    }
+                });
+                input.addEventListener('change', () => renderFiles(input.files, list));
+            }
+
+            function renderFiles(files, listElement) {
+                listElement.innerHTML = '';
+                Array.from(files).forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-preview-item';
+                    fileItem.innerHTML = `<span>📎 ${file.name}</span> <small>(${(file.size/1024/1024).toFixed(2)} MB)</small>`;
+                    listElement.appendChild(fileItem);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

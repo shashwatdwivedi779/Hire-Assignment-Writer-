@@ -1,0 +1,63 @@
+<%- include('../partials/header', { title: 'My Assignments | AssignTrust' }) %>
+<%- include('../partials/sidebar', { activePage: 'projects' }) %>
+
+<main class="main-content">
+    <%- include('../partials/topbar') %>
+
+    <div class="page-content">
+        <div class="welcome-banner" style="padding: 20px 32px; margin-bottom: 20px; background: linear-gradient(135deg, #1e293b, #0f172a);">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="welcome-text">
+                    <h2>My Projects</h2>
+                    <p>Manage all your posted assignments and track their progress.</p>
+                </div>
+                <a href="/create" class="btn-primary"><i class="fas fa-plus"></i> Post New Project</a>
+            </div>
+        </div>
+
+        <div class="panel-card" style="margin-bottom: 20px; padding: 0; overflow: hidden;">
+            <div style="display: flex; border-bottom: 1px solid var(--border);">
+                <a href="/my-assignments" style="padding: 15px 25px; text-decoration: none; color: <%= activeStatus === 'all' ? 'var(--accent)' : 'var(--text-muted)' %>; border-bottom: 2px solid <%= activeStatus === 'all' ? 'var(--accent)' : 'transparent' %>; font-weight: 600;">All</a>
+                <a href="/my-assignments?status=open" style="padding: 15px 25px; text-decoration: none; color: <%= activeStatus === 'open' ? 'var(--accent)' : 'var(--text-muted)' %>; border-bottom: 2px solid <%= activeStatus === 'open' ? 'var(--accent)' : 'transparent' %>; font-weight: 600;">Open</a>
+                <a href="/my-assignments?status=assigned" style="padding: 15px 25px; text-decoration: none; color: <%= activeStatus === 'assigned' ? 'var(--accent)' : 'var(--text-muted)' %>; border-bottom: 2px solid <%= activeStatus === 'assigned' ? 'var(--accent)' : 'transparent' %>; font-weight: 600;">Active</a>
+                <a href="/my-assignments?status=submitted" style="padding: 15px 25px; text-decoration: none; color: <%= activeStatus === 'submitted' ? 'var(--accent)' : 'var(--text-muted)' %>; border-bottom: 2px solid <%= activeStatus === 'submitted' ? 'var(--accent)' : 'transparent' %>; font-weight: 600;">Review</a>
+                <a href="/my-assignments?status=completed" style="padding: 15px 25px; text-decoration: none; color: <%= activeStatus === 'completed' ? 'var(--accent)' : 'var(--text-muted)' %>; border-bottom: 2px solid <%= activeStatus === 'completed' ? 'var(--accent)' : 'transparent' %>; font-weight: 600;">Completed</a>
+            </div>
+        </div>
+
+        <div class="project-list">
+            <% if (assignments && assignments.length > 0) { %>
+                <% assignments.forEach(assignment => { %>
+                    <div class="project-card">
+                        <div class="proj-thumb purple-bg"><i class="fas fa-book"></i></div>
+                        <div class="proj-info">
+                            <h3><a href="/assignment/<%= assignment._id %>" style="color: white; text-decoration: none;"><%= assignment.title %></a></h3>
+                            <p><%= assignment.subject %> • <%= new Date(assignment.createdAt).toLocaleDateString() %></p>
+                        </div>
+                        <div class="proj-meta">
+                            <% 
+                            let statusClass = 'pending-status';
+                            if (['assigned', 'in_progress', 'submitted'].includes(assignment.status)) statusClass = 'active-status';
+                            if (assignment.status === 'completed') statusClass = 'done-status';
+                            if (assignment.status === 'cancelled') statusClass = 'pending-status'; // Need red style ideally
+                            %>
+                            <span class="proj-status <%= statusClass %>" style="text-transform: capitalize;"><%= assignment.status.replace('_', ' ') %></span>
+                            <span class="proj-price">₹<%= assignment.budget.min %> - ₹<%= assignment.budget.max %></span>
+                        </div>
+                        <div class="proj-progress" style="display:flex; justify-content:flex-end; gap: 10px;">
+                            <a href="/assignment/<%= assignment._id %>" class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem; background: var(--bg-card2); border: 1px solid var(--border); color: white;">Manage</a>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="panel-card" style="text-align: center; padding: 50px;">
+                    <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--border); margin-bottom: 20px;"></i>
+                    <h3>No assignments found</h3>
+                    <p style="color: var(--text-muted);">You don't have any assignments matching this status.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

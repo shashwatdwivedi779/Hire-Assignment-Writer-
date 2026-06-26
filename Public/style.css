@@ -1,0 +1,245 @@
+/* ================= Base & Variables ================= */
+:root {
+    --primary-red: #E02424;
+    --primary-red-hover: #C81E1E;
+    --bg-purple: #F4EFFD;
+    --text-dark: #111827;
+    --text-gray: #4B5563;
+    --indigo: #4F46E5;
+    --green: #10B981;
+    --bg-light: #F9FAFB;
+    --white: #FFFFFF;
+    --transition: all 0.3s ease-in-out;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+    background-color: var(--bg-light);
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.text-center { text-align: center; }
+.text-indigo { color: #818CF8; }
+.text-green { color: #34D399; }
+.text-red { color: #F87171; }
+.bg-white { background-color: var(--white); }
+.bg-light { background-color: var(--bg-light); }
+.bg-dark { background-color: #1F2937; }
+.bg-indigo { background-color: var(--indigo); }
+
+/* ================= Scroll Animations ================= */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.delay-1 { transition-delay: 0.2s; }
+.delay-2 { transition-delay: 0.4s; }
+
+/* ================= Typography & Buttons ================= */
+h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+h1 span { color: var(--indigo); }
+h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; }
+h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; }
+p { color: var(--text-gray); margin-bottom: 15px; }
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+}
+.btn-primary { background-color: var(--primary-red); color: var(--white); }
+.btn-primary:hover { background-color: var(--primary-red-hover); transform: translateY(-2px); }
+.btn-outline { background-color: transparent; border: 2px solid var(--indigo); color: var(--indigo); }
+.btn-outline:hover { background-color: var(--indigo); color: var(--white); }
+.full-width { width: 100%; display: block; text-align: center; }
+
+/* ================= Navigation ================= */
+.navbar {
+    background-color: var(--white);
+    border-bottom: 1px solid #E5E7EB;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); }
+.logo span { color: var(--indigo); }
+.nav-links a { margin: 0 15px; text-decoration: none; color: var(--text-gray); font-weight: 500; transition: var(--transition); }
+.nav-links a:hover { color: var(--indigo); }
+.nav-signin { font-weight: 600; color: var(--text-dark); text-decoration: none; }
+
+/* ================= Hero Section ================= */
+.hero {
+    background-color: var(--bg-purple);
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+.hero-buttons { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+.hero-welcome h3 span { color: var(--indigo); }
+.hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+.hero-image {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
+.floating-form {
+    position: absolute;
+    bottom: -30px;
+    left: -20px;
+    background: var(--white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    width: 280px;
+    z-index: 10;
+}
+.floating-form h3 { font-size: 1.2rem; margin-bottom: 15px; color: var(--text-dark); }
+.floating-form input {
+    width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #D1D5DB; border-radius: 4px; font-family: inherit;
+}
+
+/* ================= Infinite Marquee ================= */
+.marquee-container {
+    background: var(--white);
+    border-bottom: 1px solid #E5E7EB;
+    padding: 15px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    display: flex;
+}
+.marquee-content {
+    display: flex;
+    animation: scrollMarquee 20s linear infinite;
+}
+.marquee-item {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin: 0 40px;
+    display: inline-block;
+}
+@keyframes scrollMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-33.3333%); }
+}
+
+/* ================= Layout Grids & Cards ================= */
+.section {
+    padding: 80px 0;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid #E5E7EB;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+.card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+.dark-card { background: #374151; padding: 30px; border-radius: 8px; }
+.dark-card p { color: #D1D5DB; font-size: 0.9rem; margin-bottom: 8px;}
+
+/* ================= Escrow Workflow ================= */
+.escrow-workflow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.workflow-step {
+    background: var(--bg-light); border: 1px solid #E5E7EB; padding: 20px; border-radius: 8px; width: 18%; font-size: 2rem; font-weight: 600; text-align: center;
+}
+.workflow-step span { font-size: 0.9rem; color: var(--text-dark); display: block; margin-top: 10px; font-weight: 600; }
+.workflow-arrow { font-size: 1.5rem; color: #9CA3AF; }
+
+/* ================= How It Works Section ================= */
+.how-it-works-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+    align-items: stretch;
+    margin-top: 40px;
+}
+.how-it-works-grid ul { list-style: none; }
+.how-it-works-grid li { display: flex; align-items: center; margin-bottom: 15px; font-weight: 500; }
+.step-num { background: var(--indigo); color: var(--white); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-right: 15px; font-size: 0.8rem; font-weight: bold; flex-shrink: 0; }
+.writer-card .step-num { background: var(--green); }
+.center-image-wrapper { display: flex; justify-content: center; align-items: center; }
+.feature-image { width: 100%; height: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+/* ================= Stats & Footer ================= */
+.stat-number { font-size: 3rem; margin-bottom: 5px; font-weight: 800; }
+.as { color: rgba(255, 255, 255, 0.9); font-weight: 500; }
+footer { background: var(--white); padding: 30px 0; border-top: 1px solid #E5E7EB; }
+
+/* ================= Responsive (Mobile Fit) ================= */
+@media (max-width: 992px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .hero-buttons { justify-content: center; }
+    .floating-form { position: relative; bottom: 0; left: 0; width: 100%; max-width: 450px; margin: 20px auto 0; }
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .how-it-works-grid { grid-template-columns: 1fr; }
+    .center-image-wrapper { order: -1; margin-bottom: 20px; }
+    .nav-links { display: none; } 
+    .escrow-workflow { justify-content: center; }
+    .workflow-step { width: 45%; }
+    .workflow-arrow { display: none; }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 2.2rem; }
+    .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .workflow-step { width: 100%; }
+    .hero-image { max-width: 100%; }
+}

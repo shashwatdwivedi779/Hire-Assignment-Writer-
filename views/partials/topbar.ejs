@@ -1,0 +1,29 @@
+        <!-- TOP NAVBAR -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+            <div class="topbar-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search projects, students...">
+            </div>
+            <div class="topbar-right">
+                <a href="/notifications" class="icon-btn" id="notifBtn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <% if (typeof unreadNotifCount !== 'undefined' && unreadNotifCount > 0) { %>
+                        <span class="dot-badge" id="topbar-notif-badge"><%= unreadNotifCount %></span>
+                    <% } else { %>
+                        <span class="dot-badge" id="topbar-notif-badge" style="display: none;">0</span>
+                    <% } %>
+                </a>
+                <a href="/chat" class="icon-btn" id="msgBtn" title="Messages">
+                    <i class="fas fa-envelope"></i>
+                    <span class="dot-badge" id="topbar-msg-badge" style="display: none;">0</span>
+                </a>
+                <a href="/profile" class="topbar-profile" style="text-decoration: none;">
+                    <img src="<%= user.avatar || 'https://i.pravatar.cc/150?img=12' %>" alt="Profile">
+                    <div class="topbar-profile-info">
+                        <span class="topbar-name"><%= user.name %></span>
+                        <span class="topbar-college"><%= user.college || 'AssignTrust' %></span>
+                    </div>
+                </a>
+            </div>
+        </header>

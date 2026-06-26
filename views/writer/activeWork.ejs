@@ -1,0 +1,55 @@
+<%- include('../partials/header', { title: 'Active Work | AssignTrust' }) %>
+<%- include('../partials/sidebar', { activePage: 'work' }) %>
+
+<main class="main-content">
+    <%- include('../partials/topbar') %>
+
+    <div class="page-content">
+        <div class="welcome-banner" style="padding: 20px 32px; margin-bottom: 20px; background: linear-gradient(135deg, #064e3b, #022c22);">
+            <div class="welcome-text">
+                <h2>Active Work</h2>
+                <p>Manage your ongoing assignments and submit completed work.</p>
+            </div>
+        </div>
+
+        <div class="project-list">
+            <% if (assignments && assignments.length > 0) { %>
+                <% assignments.forEach(assignment => { %>
+                    <div class="project-card" style="grid-template-columns: 60px 1fr auto auto; align-items: center; padding: 20px;">
+                        <img src="<%= assignment.student.avatar || 'https://i.pravatar.cc/150?img=11' %>" alt="Client" style="width: 50px; height: 50px; border-radius: 50%;">
+                        <div class="proj-info">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">
+                                <a href="/assignment/<%= assignment._id %>" style="color: white; text-decoration: none;"><%= assignment.title %></a>
+                            </h3>
+                            <p style="color: var(--accent2); font-size: 0.85rem; margin-bottom: 10px;">Client: <%= assignment.student.name %></p>
+                            
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem;"><i class="fas fa-clock"></i> Deadline: <%= new Date(assignment.deadline).toLocaleDateString() %></span>
+                            </div>
+                        </div>
+                        <div class="proj-meta" style="align-items: center; justify-content: center; padding: 0 20px;">
+                            <span class="proj-status <%= assignment.status === 'submitted' ? 'active-status' : 'pending-status' %>" style="text-transform: capitalize; padding: 6px 12px;"><%= assignment.status.replace('_', ' ') %></span>
+                        </div>
+                        <div class="proj-progress" style="display: flex; flex-direction: column; gap: 10px; justify-content: center; padding-left: 20px; border-left: 1px solid var(--border);">
+                            <% if (assignment.status === 'submitted') { %>
+                                <span style="text-align: center; font-size: 0.85rem; color: var(--green);"><i class="fas fa-check-circle"></i> Work Submitted</span>
+                                <a href="/assignment/<%= assignment._id %>" class="btn-primary" style="text-align: center; background: var(--bg-card2); border: 1px solid var(--border); color: white;">View Details</a>
+                            <% } else { %>
+                                <a href="/assignment/<%= assignment._id %>" class="btn-primary" style="text-align: center;"><i class="fas fa-upload"></i> Submit Work</a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="panel-card" style="text-align: center; padding: 50px;">
+                    <i class="fas fa-briefcase" style="font-size: 3rem; color: var(--border); margin-bottom: 20px;"></i>
+                    <h3>No active work</h3>
+                    <p style="color: var(--text-muted);">You don't have any active assignments right now. Browse the marketplace to find new opportunities.</p>
+                    <a href="/marketplace" class="btn-primary" style="margin-top: 20px; display: inline-flex;"><i class="fas fa-search"></i> Browse Marketplace</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

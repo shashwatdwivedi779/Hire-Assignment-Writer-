@@ -1,0 +1,286 @@
+<%- include('../partials/header', { title: 'Chat | AssignTrust' }) %>
+<%- include('../partials/sidebar', { activePage: 'chat' }) %>
+
+<main class="main-content">
+    <%- include('../partials/topbar') %>
+
+    <div class="page-content" style="height: calc(100vh - 80px); display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0;">
+        <div class="panel-card" style="flex: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 12px 12px 0 0;">
+            
+            <!-- CHAT HEADER -->
+            <div style="padding: 15px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); z-index: 10;">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <a href="/chat" style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.05);"><i class="fas fa-arrow-left"></i></a>
+                    <div style="position: relative;">
+                        <img src="<%= other.avatar || 'https://i.pravatar.cc/150?img=12' %>" alt="User" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
+                        <% if (other.isOnline) { %>
+                            <div style="position: absolute; bottom: 2px; right: 2px; width: 12px; height: 12px; background: #10b981; border-radius: 50%; border: 2px solid var(--bg-card);"></div>
+                        <% } %>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 3px; display: flex; align-items: center; gap: 8px;">
+                            <%= other.name %>
+                            <span style="font-size: 0.7rem; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 4px; text-transform: capitalize;"><%= other.role %></span>
+                        </h2>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);" id="online-status">
+                            <%= other.isOnline ? 'Online' : 'Offline • Last seen ' + new Date(other.lastSeen).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <!-- Assignment Link if this chat is tied to one -->
+                    <% if (conversation.assignment) { %>
+                        <a href="/assignment/<%= conversation.assignment %>" class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem; background: transparent; border: 1px solid var(--border); color: white;"><i class="fas fa-file-alt"></i> View Project</a>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- CHAT MESSAGES -->
+            <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 25px; background: var(--bg-dark); display: flex; flex-direction: column; gap: 15px;" class="custom-scrollbar">
+                <% if (messages && messages.length > 0) { %>
+                    <% messages.forEach(msg => { %>
+                        <% const isMine = msg.sender._id.toString() === user._id.toString(); %>
+                        <div class="message-wrapper <%= isMine ? 'mine' : 'theirs' %>" id="msg-<%= msg._id %>">
+                            <% if (!isMine) { %>
+                                <img src="<%= msg.sender.avatar || 'https://i.pravatar.cc/150?img=12' %>" class="msg-avatar" alt="Avatar">
+                            <% } %>
+                            
+                            <div class="message-content">
+                                <% if (msg.type === 'text') { %>
+                                    <p><%= msg.text %></p>
+                                <% } else if (msg.type === 'image' && msg.file) { %>
+                                    <img src="<%= msg.file.url %>" alt="Image" style="max-width: 250px; border-radius: 8px; margin-bottom: 5px;">
+                                    <% if (msg.text) { %><p><%= msg.text %></p><% } %>
+                                <% } else if (msg.file) { %>
+                                    <a href="<%= msg.file.url %>" target="_blank" class="msg-file-attachment">
+                                        <i class="fas <%= msg.type === 'pdf' ? 'fa-file-pdf' : 'fa-file-alt' %>"></i>
+                                        <span><%= msg.file.originalName %></span>
+                                    </a>
+                                    <% if (msg.text) { %><p><%= msg.text %></p><% } %>
+                                <% } %>
+                                
+                                <span class="msg-time">
+                                    <%= new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                    <% if (isMine) { %>
+                                        <i class="fas fa-check-double" style="margin-left: 5px; font-size: 0.7rem; color: <%= msg.readBy.length > 1 ? 'var(--accent)' : 'inherit' %>;"></i>
+                                    <% } %>
+                                </span>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div style="text-align: center; color: var(--text-muted); margin-top: auto; margin-bottom: auto;">
+                        <p>Say hello to <%= other.name %>!</p>
+                    </div>
+                <% } %>
+                <div id="typing-indicator" style="display: none; align-self: flex-start; color: var(--text-muted); font-size: 0.85rem; padding: 5px 15px; margin-left: 45px; background: rgba(255,255,255,0.05); border-radius: 20px;">
+                    <%= other.name %> is typing...
+                </div>
+            </div>
+
+            <!-- CHAT INPUT -->
+            <div style="padding: 15px 25px; background: var(--bg-card); border-top: 1px solid var(--border);">
+                <form id="chat-form" style="display: flex; gap: 10px; align-items: flex-end;">
+                    <div style="position: relative;">
+                        <input type="file" id="file-input" style="display: none;">
+                        <button type="button" id="btn-attach" class="icon-btn" style="background: transparent; border: 1px solid var(--border); color: var(--text-muted);"><i class="fas fa-paperclip"></i></button>
+                    </div>
+                    
+                    <div style="flex: 1; position: relative;">
+                        <div id="file-preview" style="display: none; padding: 5px 10px; background: rgba(255,255,255,0.1); border-radius: 6px 6px 0 0; font-size: 0.8rem; justify-content: space-between; align-items: center;">
+                            <span id="file-name">filename.jpg</span>
+                            <i class="fas fa-times" id="remove-file" style="cursor: pointer;"></i>
+                        </div>
+                        <textarea id="chat-input" rows="1" placeholder="Type a message..." style="width: 100%; padding: 12px 15px; border-radius: 24px; border: 1px solid var(--border); background: var(--bg-dark); color: white; resize: none; overflow-y: hidden; outline: none; line-height: 1.4;"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" style="border-radius: 50%; width: 45px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="fas fa-paper-plane" style="margin-right: -3px;"></i></button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<style>
+.message-wrapper { display: flex; gap: 10px; max-width: 75%; }
+.message-wrapper.mine { align-self: flex-end; flex-direction: row-reverse; }
+.message-wrapper.theirs { align-self: flex-start; }
+
+.msg-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 18px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+.mine .message-content {
+    background: linear-gradient(135deg, var(--accent), #5648e6);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+.theirs .message-content {
+    background: var(--bg-card2);
+    color: white;
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+}
+
+.msg-time { display: block; font-size: 0.7rem; margin-top: 5px; opacity: 0.7; text-align: right; }
+.msg-file-attachment { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: 8px; color: white; text-decoration: none; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.1); }
+</style>
+
+<script>
+    const conversationId = '<%= conversation._id %>';
+    const myId = '<%= user._id %>';
+    const myAvatar = '<%= user.avatar || "https://i.pravatar.cc/150?img=12" %>';
+    
+    // Auto resize textarea
+    const chatInput = document.getElementById('chat-input');
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+        if (this.value === '') this.style.height = 'auto';
+        
+        // Typing indicator logic
+        socket.emit('typing', { conversationId });
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            socket.emit('stop_typing', { conversationId });
+        }, 1500);
+    });
+
+    let typingTimer;
+
+    // Scroll to bottom
+    const messagesContainer = document.getElementById('chat-messages');
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    scrollToBottom();
+
+    // File handling
+    const fileInput = document.getElementById('file-input');
+    const btnAttach = document.getElementById('btn-attach');
+    const filePreview = document.getElementById('file-preview');
+    const fileName = document.getElementById('file-name');
+    const removeFile = document.getElementById('remove-file');
+    let selectedFile = null;
+
+    btnAttach.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => {
+        if (e.target.files.length > 0) {
+            selectedFile = e.target.files[0];
+            fileName.textContent = selectedFile.name;
+            filePreview.style.display = 'flex';
+        }
+    };
+    removeFile.onclick = () => {
+        selectedFile = null;
+        fileInput.value = '';
+        filePreview.style.display = 'none';
+    };
+
+    // Form submit
+    document.getElementById('chat-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if (!text && !selectedFile) return;
+
+        // Reset UI immediately
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        filePreview.style.display = 'none';
+        
+        // Stop typing indicator
+        socket.emit('stop_typing', { conversationId });
+
+        // Build FormData
+        const formData = new FormData();
+        formData.append('text', text);
+        if (selectedFile) formData.append('chatFile', selectedFile);
+
+        try {
+            const res = await fetch(`/chat/${conversationId}/send`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                appendMessage(data.message);
+                selectedFile = null;
+                fileInput.value = '';
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    function appendMessage(msg) {
+        const isMine = msg.sender._id === myId;
+        
+        // Remove typing indicator if present
+        const typingInd = document.getElementById('typing-indicator');
+        typingInd.style.display = 'none';
+
+        let contentHtml = '';
+        if (msg.type === 'text') {
+            contentHtml = `<p>${msg.text}</p>`;
+        } else if (msg.type === 'image' && msg.file) {
+            contentHtml = `<img src="${msg.file.url}" style="max-width: 250px; border-radius: 8px; margin-bottom: 5px;">`;
+            if (msg.text) contentHtml += `<p>${msg.text}</p>`;
+        } else if (msg.file) {
+            contentHtml = `<a href="${msg.file.url}" target="_blank" class="msg-file-attachment"><i class="fas fa-file"></i><span>${msg.file.originalName}</span></a>`;
+            if (msg.text) contentHtml += `<p>${msg.text}</p>`;
+        }
+
+        const time = new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        const div = document.createElement('div');
+        div.className = `message-wrapper ${isMine ? 'mine' : 'theirs'}`;
+        
+        let avatarHtml = isMine ? '' : `<img src="${msg.sender.avatar || 'https://i.pravatar.cc/150?img=12'}" class="msg-avatar">`;
+        
+        div.innerHTML = `
+            ${avatarHtml}
+            <div class="message-content">
+                ${contentHtml}
+                <span class="msg-time">${time}</span>
+            </div>
+        `;
+        
+        messagesContainer.insertBefore(div, typingInd);
+        scrollToBottom();
+    }
+
+    // Socket.io listeners setup via header.ejs global `socket`
+    socket.emit('join_conversation', conversationId);
+
+    // Override the global new_message listener to inject here instead of generic toast
+    socket.on('new_message', (msg) => {
+        // Only append if it belongs to this conversation and is not from me (I already appended mine via API response)
+        if (msg.conversation === conversationId && msg.sender._id !== myId) {
+            appendMessage(msg);
+        }
+    });
+
+    socket.on('typing', (data) => {
+        if (data.conversationId === conversationId && data.userId !== myId) {
+            document.getElementById('typing-indicator').style.display = 'block';
+            scrollToBottom();
+        }
+    });
+
+    socket.on('stop_typing', (data) => {
+        if (data.conversationId === conversationId) {
+            document.getElementById('typing-indicator').style.display = 'none';
+        }
+    });
+
+</script>
+
+<%- include('../partials/footer') %>
