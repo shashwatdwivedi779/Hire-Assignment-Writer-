@@ -1,0 +1,74 @@
+<%- include('../partials/header', { title: 'Manage Assignments | Admin' }) %>
+<%- include('../partials/sidebar', { activePage: 'assignments' }) %>
+
+<main class="main-content">
+    <%- include('../partials/topbar') %>
+
+    <div class="page-content">
+        <div class="welcome-banner" style="padding: 20px 32px; margin-bottom: 20px;">
+            <div class="welcome-text">
+                <h2>Assignment Oversight</h2>
+                <p>Monitor all assignments across the platform.</p>
+            </div>
+        </div>
+
+        <div class="panel-card" style="padding: 0; overflow: hidden;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); text-align: left;">
+                            <th style="padding: 15px;">Title & Subject</th>
+                            <th style="padding: 15px;">Client</th>
+                            <th style="padding: 15px;">College</th>
+                            <th style="padding: 15px;">Budget</th>
+                            <th style="padding: 15px;">Status</th>
+                            <th style="padding: 15px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (assignments && assignments.length > 0) { %>
+                            <% assignments.forEach(a => { %>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 15px;">
+                                        <a href="/assignment/<%= a._id %>" style="color: white; text-decoration: none; font-weight: 600;"><%= a.title %></a>
+                                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;"><%= a.subject %></p>
+                                    </td>
+                                    <td style="padding: 15px;"><%= a.student ? a.student.name : 'Unknown' %></td>
+                                    <td style="padding: 15px;"><%= a.college %></td>
+                                    <td style="padding: 15px; color: var(--green);">₹<%= a.budget.min %> - ₹<%= a.budget.max %></td>
+                                    <td style="padding: 15px;">
+                                        <span style="font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; text-transform: capitalize; background: rgba(255,255,255,0.1);"><%= a.status.replace('_', ' ') %></span>
+                                    </td>
+                                    <td style="padding: 15px; text-align: center;">
+                                        <button onclick="deleteAssignment('<%= a._id %>')" class="icon-btn" style="color: #ef4444; background: rgba(239,68,68,0.1); border: none;" title="Delete Assignment"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr><td colspan="6" style="padding: 30px; text-align: center; color: var(--text-muted);">No assignments found.</td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+async function deleteAssignment(id) {
+    if (!confirm('Are you sure you want to delete this assignment? All associated proposals will be lost.')) return;
+    try {
+        const res = await fetch(`/admin/assignments/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message);
+        }
+    } catch(e) {
+        alert('Error deleting assignment');
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

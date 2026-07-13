@@ -1,0 +1,113 @@
+<%- include('../partials/header', { title: 'Admin Dashboard | AssignTrust' }) %>
+<%- include('../partials/sidebar', { activePage: 'dashboard' }) %>
+
+<main class="main-content">
+    <%- include('../partials/topbar') %>
+
+    <div class="page-content">
+        <div class="welcome-banner" style="background: linear-gradient(135deg, #1e1b4b, #312e81); padding: 20px 32px; margin-bottom: 20px;">
+            <div class="welcome-text">
+                <h2>Admin Overview</h2>
+                <p>Platform statistics and high-level metrics.</p>
+            </div>
+        </div>
+
+        <!-- STATS GRID -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value"><%= stats.totalUsers %></span>
+                    <span class="stat-label">Total Users</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value"><%= stats.totalClients %> Clients</span>
+                    <span class="stat-label"><%= stats.totalWriters %> Writers</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon yellow"><i class="fas fa-tasks"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value"><%= stats.totalAssignments %></span>
+                    <span class="stat-label">Assignments Posted</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value"><%= stats.completedProjects %></span>
+                    <span class="stat-label">Completed Jobs</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <div class="main-column">
+                <div class="panel-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Recent Users</h3>
+                        <a href="/admin/users" class="view-all-link">Manage All</a>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); text-align: left;">
+                                    <th style="padding: 10px;">Name</th>
+                                    <th style="padding: 10px;">Email</th>
+                                    <th style="padding: 10px;">Role</th>
+                                    <th style="padding: 10px;">College</th>
+                                    <th style="padding: 10px;">Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (recentUsers && recentUsers.length > 0) { %>
+                                    <% recentUsers.forEach(u => { %>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                            <td style="padding: 12px 10px;"><%= u.name %></td>
+                                            <td style="padding: 12px 10px; color: var(--text-muted);"><%= u.email %></td>
+                                            <td style="padding: 12px 10px; text-transform: capitalize;"><%= u.role %></td>
+                                            <td style="padding: 12px 10px;"><%= u.college %></td>
+                                            <td style="padding: 12px 10px; color: var(--text-muted);"><%= new Date(u.createdAt).toLocaleDateString() %></td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr><td colspan="5" style="padding: 20px; text-align: center; color: var(--text-muted);">No users found.</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <aside class="right-panel">
+                <div class="panel-card">
+                    <h3 style="margin-bottom: 15px;">College Stats</h3>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
+                            <span>REC Rewa</span>
+                            <span style="font-weight: bold;"><%= stats.recUsers %> Users</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: <%= (stats.recUsers / (stats.totalUsers || 1)) * 100 %>%; background: var(--accent); height: 100%;"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
+                            <span>IGEC Sagar</span>
+                            <span style="font-weight: bold;"><%= stats.igecUsers %> Users</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: <%= (stats.igecUsers / (stats.totalUsers || 1)) * 100 %>%; background: var(--green); height: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>
